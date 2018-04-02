@@ -1,25 +1,8 @@
 pipeline {
   agent {
     docker {
-      image 'npm'
-      args '''FROM node:6-alpine
-
-# Create server working directory
-RUN mkdir -p /home/node/app
-WORKDIR /home/node/app
-
-# Install server dependencies
-COPY /express-image/package.json /home/node/app
-RUN npm install
-
-# Copy node Application
-COPY app.js /home/node/app
-
-# Open port
-EXPOSE 9000
-
-CMD ["npm", "start"
-'''
+      image 'node::6-alpine'
+      args '-p 3000:3000'
     }
     
   }
@@ -27,10 +10,8 @@ CMD ["npm", "start"
     stage('Build') {
       steps {
         build(job: 'Build', propagate: true, quietPeriod: 1, wait: true)
+        sh 'npm install'
       }
     }
-  }
-  environment {
-    jenkins = '1'
   }
 }
